@@ -1,4 +1,8 @@
 #
+# tado_autoassist.py
+# Created by Teun Schriks <teunschriks@gmail.com> on 29.12.2021
+#
+# Heavily based on:
 # tado_aa.py (Tado Auto-Assist for Geofencing and Open Window Detection)
 # Created by Adrian Slabu <adrianslabu@icloud.com> on 11.02.2021
 # 
