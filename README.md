@@ -4,13 +4,13 @@ tado autoassist is based on adrianslabu's tado_aa (https://github.com/adrianslab
 
 I have added docker support, and made username and password settable by commandline. 
 
-The docker image accepts the username and password as environment variables:
-USERNAME
-PASSWORD
+The docker image accepts the username and password as environment variables: <br>
+`USERNAME`<br>
+`PASSWORD`
 
 #Install
 The docker image can be build with:
-docker build . t -tag
+`docker build . -t tag`
 
-the docker image can be started with:
-docker run -e USERNAME=<username> -e PASSWORD=<password>
+The docker image can be started with:
+`docker run -e USERNAME=<username> -e PASSWORD=<password>`
