@@ -7,7 +7,7 @@ The docker image accepts the username and password as environment variables: <br
 `USERNAME`<br>
 `PASSWORD`
 
-#Install
+#Install<br>
 The docker image can be build with:
 `docker build . -t tag`
 
