@@ -9,7 +9,7 @@ def setup():
 def set_all_lights_on(is_on):
     if (is_on):
         print("Turning all lights on")
-    else
+    else:
         print("Turning all lights off")
     lights = bridge.get_light_objects()
     for light in lights:
