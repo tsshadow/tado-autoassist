@@ -2,6 +2,7 @@ FROM alpine:3.15.0
 
 ENV USERNAME=
 ENV PASSWORD=
+ENV IP_HUE=
 RUN apk update &&\
     apk add py3-pip  &&\
     pip3 install python-tado &&\
@@ -10,4 +11,4 @@ RUN apk update &&\
 COPY tado_autoassist.py .
 COPY huecontrol.py .
 
-ENTRYPOINT python3 tado_autoassist.py ${USERNAME} ${PASSWORD}
+ENTRYPOINT python3 tado_autoassist.py ${USERNAME} ${PASSWORD} ${IP_HUE}
