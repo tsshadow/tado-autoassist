@@ -201,7 +201,7 @@ def engine():
 def setAway():
     print ("Activating AWAY mode.")
     t.setAway()
-    set_all_lights_on(False)
+    setAllLightsOn(False) # Turn off ALL hue lights
     print ("Done!")
 
 def setHome():
