@@ -7,7 +7,7 @@ def setup():
     bridge.connect();
 
 def set_all_lights_on(is_on):
-    if (is_on)
+    if (is_on):
         print("Turning all lights on")
     else
         print("Turning all lights off")
