@@ -10,6 +10,7 @@
 import sys
 import time
 import inspect
+from huecontrol import *
 
 from datetime import datetime
 from PyTado.interface import Tado
@@ -22,8 +23,8 @@ def main():
     global errorRetringInterval
     global enableLog
     global logFile
-
-
+    setup()
+    set_all_lights_on(True)
     lastMessage = ""
 
     if (len(sys.argv) < 3 ):
@@ -99,6 +100,7 @@ def homeStatus():
             printm ("Your home is in HOME Mode but are no devices at home.")
             printm ("Activating AWAY mode.")
             t.setAway()
+            set_all_lights_on(False) 
             printm ("Done!")
         elif (len(devicesHome) > 0 and homeState == "AWAY"):
             if (len(devicesHome) == 1):
