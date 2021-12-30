@@ -24,7 +24,6 @@ def main():
     global enableLog
     global logFile
     setup()
-    set_all_lights_on(True)
     lastMessage = ""
 
     if (len(sys.argv) < 3 ):
@@ -188,7 +187,8 @@ def engine():
             elif (len(devicesHome) == 0 and homeState == "HOME"):
                 printm ("Are no devices at home, activating AWAY mode.")
                 t.setAway()
-                printm ("Done!")
+                set_all_lights_on(False)
+            printm ("Done!")
                 printm ("Waiting for a change in devices location or for an open window..")
 
             devicesHome.clear()
