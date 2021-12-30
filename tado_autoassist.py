@@ -188,7 +188,7 @@ def engine():
                 printm ("Are no devices at home, activating AWAY mode.")
                 t.setAway()
                 set_all_lights_on(False)
-            printm ("Done!")
+                printm ("Done!")
                 printm ("Waiting for a change in devices location or for an open window..")
 
             devicesHome.clear()
