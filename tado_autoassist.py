@@ -9,7 +9,7 @@
 
 import sys
 import time
-import inspect
+from huecontrol import *
 
 from datetime import datetime
 from PyTado.interface import Tado
@@ -22,13 +22,12 @@ def main():
     global errorRetringInterval
     global enableLog
     global logFile
-
-
     lastMessage = ""
-
-    if (len(sys.argv) < 3 ):
-        print ("Please set username and password with: python3 <file>.py <username> <password>\n")
+    if (len(sys.argv) < 4 ):
+        print ("Please set username, password and hue bridge with: python3 <file>.py <username> <password> <ip hue>\n")
     else:
+        setup(sys.argv[3]) # hue setup
+
         username = sys.argv[1] # tado username
         password = sys.argv[2] # tado password
 
@@ -49,19 +48,19 @@ def login():
         t = Tado(username, password)
 
         if (lastMessage.find("Connection Error") != -1):
-            printm ("Connection established, everything looks good now, continuing..\n")
+            print ("Connection established, everything looks good now, continuing..\n")
 
     except KeyboardInterrupt:
-        printm ("Interrupted by user.")
+        print ("Interrupted by user.")
         sys.exit(0)
 
     except Exception as e:
         if (str(e).find("access_token") != -1):
-            printm ("Login error, check the username / password !")
-            printm ("Username was:"+username)
+            print ("Login error, check the username / password !")
+            print ("Username was:"+username)
             sys.exit(0)
         else:
-            printm (str(e) + "\nConnection Error, retrying in " + str(errorRetringInterval) + " sec..")
+            print (str(e) + "\nConnection Error, retrying in " + str(errorRetringInterval) + " sec..")
             time.sleep(errorRetringInterval)
             login()    
 
@@ -80,11 +79,11 @@ def homeStatus():
                         devicesHome.append(mobileDevice["name"])
 
         if (lastMessage.find("Connection Error") != -1 or lastMessage.find("Waiting for the device location") != -1):
-            printm ("Successfully got the location, everything looks good now, continuing..\n")
+            print ("Successfully got the location, everything looks good now, continuing..\n")
 
         if (len(devicesHome) > 0 and homeState == "HOME"):
             if (len(devicesHome) == 1):
-                printm ("Your home is in HOME Mode, the device " + devicesHome[0] + " is at home.")
+                print ("Your home is in HOME Mode, the device " + devicesHome[0] + " is at home.")
             else:
                 devices = ""
                 for i in range(len(devicesHome)):
@@ -92,17 +91,15 @@ def homeStatus():
                         devices += devicesHome[i] + ", "
                     else:
                         devices += devicesHome[i]
-                printm ("Your home is in HOME Mode, the devices " + devices + " are at home.")
+                print ("Your home is in HOME Mode, the devices " + devices + " are at home.")
         elif (len(devicesHome) == 0 and homeState == "AWAY"):
-            printm ("Your home is in AWAY Mode and are no devices at home.")
+            print ("Your home is in AWAY Mode and are no devices at home.")
         elif (len(devicesHome) == 0 and homeState == "HOME"):
-            printm ("Your home is in HOME Mode but are no devices at home.")
-            printm ("Activating AWAY mode.")
-            t.setAway()
-            printm ("Done!")
+            print ("Your home is in HOME Mode but are no devices at home.")
+            setAway()
         elif (len(devicesHome) > 0 and homeState == "AWAY"):
             if (len(devicesHome) == 1):
-                printm ("Your home is in AWAY Mode but the device " + devicesHome[0] + " is at home.")
+                print ("Your home is in AWAY Mode but the device " + devicesHome[0] + " is at home.")
             else:
                 devices = ""
                 for i in range(len(devicesHome)):
@@ -110,31 +107,29 @@ def homeStatus():
                         devices += devicesHome[i] + ", "
                     else:
                         devices += devicesHome[i]
-                printm ("Your home is in AWAY Mode but the devices " + devices + " are at home.")
+                print ("Your home is in AWAY Mode but the devices " + devices + " are at home.")
 
-            printm ("Activating HOME mode.")
-            t.setHome()
-            printm ("Done!")
+            setHome()
 
         devicesHome.clear()
-        printm ("Waiting for a change in devices location or for an open window..")
+        print ("Waiting for a change in devices location or for an open window..")
         time.sleep(1)
         engine()
 
     except KeyboardInterrupt:
-        printm ("Interrupted by user.")
+        print ("Interrupted by user.")
         sys.exit(0)
 
     except Exception as e:
         if (str(e).find("location") != -1):
-            printm ("I cannot get the location of one of the devices because the Geofencing is off or the user signed out from tado app.\nWaiting for the device location, until then the Geofencing Assist is NOT active.\nWaiting for an open window..")
+            print ("I cannot get the location of one of the devices because the Geofencing is off or the user signed out from tado app.\nWaiting for the device location, until then the Geofencing Assist is NOT active.\nWaiting for an open window..")
             time.sleep(1)
             engine()
         elif (str(e).find("NoneType") != -1):
             time.sleep(1)
             engine()
         else:
-            printm (str(e) + "\nConnection Error, retrying in " + str(errorRetringInterval) + " sec..")
+            print (str(e) + "\nConnection Error, retrying in " + str(errorRetringInterval) + " sec..")
             time.sleep(errorRetringInterval)
             homeStatus()
 
@@ -149,10 +144,10 @@ def engine():
                     zoneID = z["id"]
                     zoneName = z["name"]
                     if (t.getOpenWindowDetected(zoneID)["openWindowDetected"] == True):
-                        printm (zoneName + ": open window detected, activating the OpenWindow mode.")
+                        print (zoneName + ": open window detected, activating the OpenWindow mode.")
                         t.setOpenWindow(zoneID)
-                        printm ("Done!")
-                        printm ("Waiting for a change in devices location or for an open window..")
+                        print ("Done!")
+                        print ("Waiting for a change in devices location or for an open window..")
             #Geofencing
             homeState = t.getHomeState()["presence"]
 
@@ -165,12 +160,12 @@ def engine():
                             devicesHome.append(mobileDevice["name"])
 
             if (lastMessage.find("Connection Error") != -1 or lastMessage.find("Waiting for the device location") != -1):
-                printm ("Successfully got the location, everything looks good now, continuing..\n")
-                printm ("Waiting for a change in devices location or for an open window..")
+                print ("Successfully got the location, everything looks good now, continuing..\n")
+                print ("Waiting for a change in devices location or for an open window..")
 
             if (len(devicesHome) > 0 and homeState == "AWAY"):
                 if (len(devicesHome) == 1):
-                    printm (devicesHome[0] + " is at home, activating HOME mode.")
+                    print (devicesHome[0] + " is at home, activating HOME mode.")
                 else:
                     devices = ""
                     for i in range(len(devicesHome)):
@@ -178,45 +173,40 @@ def engine():
                             devices += devicesHome[i] + ", "
                         else:
                             devices += devicesHome[i]
-                    printm (devices + " are at home, activating HOME mode.")
-                t.setHome()
-                printm ("Done!")
-                printm ("Waiting for a change in devices location or for an open window..")
+                    print (devices + " are at home, activating HOME mode.")
+                setHome()
+                print ("Done!")
+                print ("Waiting for a change in devices location or for an open window..")
 
             elif (len(devicesHome) == 0 and homeState == "HOME"):
-                printm ("Are no devices at home, activating AWAY mode.")
-                t.setAway()
-                printm ("Done!")
-                printm ("Waiting for a change in devices location or for an open window..")
+                print ("Are no devices at home")
+                setAway()
+                print ("Waiting for a change in devices location or for an open window..")
 
             devicesHome.clear()
             time.sleep(checkingInterval)
 
         except KeyboardInterrupt:
-                printm ("Interrupted by user.")
+                print ("Interrupted by user.")
                 sys.exit(0)
 
         except Exception as e:
                 if (str(e).find("location") != -1 or str(e).find("NoneType") != -1):
-                    printm ("I cannot get the location of one of the devices because the Geofencing is off or the user signed out from tado app.\nWaiting for the device location, until then the Geofencing Assist is NOT active.\nWaiting for an open window..")
+                    print ("I cannot get the location of one of the devices because the Geofencing is off or the user signed out from tado app.\nWaiting for the device location, until then the Geofencing Assist is NOT active.\nWaiting for an open window..")
                     time.sleep(checkingInterval)
                 else:
-                    printm (str(e) + "\nConnection Error, retrying in " + str(errorRetringInterval) + " sec..")
+                    print (str(e) + "\nConnection Error, retrying in " + str(errorRetringInterval) + " sec..")
                     time.sleep(errorRetringInterval)
 
-def printm(message):
-    global lastMessage
-    
-    if (enableLog == True and message != lastMessage):
-        try:
-            with open(logFile, "a") as log:
-                log.write(datetime.now().strftime('%d-%m-%Y %H:%M:%S') + " # " + message + "\n")
-                log.close()
+def setAway():
+    print ("Activating AWAY mode.")
+    t.setAway()
+    setAllLightsOn(False) # Turn off ALL hue lights
+    print ("Done!")
 
-        except Exception as e:
-            sys.stdout.write(datetime.now().strftime('%d-%m-%Y %H:%M:%S') + " # " + str(e) + "\n")
+def setHome():
+    print ("Activating HOME mode.")
+    t.setHome()
+    print ("Done!")
 
-    if (message != lastMessage):
-        lastMessage = message
-        sys.stdout.write(datetime.now().strftime('%d-%m-%Y %H:%M:%S') + " # " + message + "\n")
 main()
