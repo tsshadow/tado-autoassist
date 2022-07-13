@@ -5,7 +5,7 @@ ENV PASSWORD=
 ENV IP_HUE=
 RUN apk update &&\
     apk add py3-pip  &&\
-    pip3 install python-tado &&\
+    pip3 install git@github.com:wmalgadey/PyTado.git &&\
     pip3 install phue
     
 COPY tado_autoassist.py .
