@@ -38,6 +38,7 @@ def main():
         logFile = "/l.log" # log file location
 
         login()
+        t.setDebugging(True)
         homeStatus()
     
 def login():
@@ -71,11 +72,11 @@ def homeStatus():
     try:
         homeState = t.getHomeState()["presence"]
         devicesHome = []
-
+        print  (t.getMobileDevices())
         for mobileDevice in t.getMobileDevices():
             if (mobileDevice["settings"]["geoTrackingEnabled"] == True):
                 if (mobileDevice["location"] != None):
-                    if (mobileDevice["location"]["relativeDistanceFromHomeFence"] == 0.0):
+                    if (mobileDevice["location"]["atHome"]):
                         devicesHome.append(mobileDevice["name"])
 
         if (lastMessage.find("Connection Error") != -1 or lastMessage.find("Waiting for the device location") != -1):
@@ -156,7 +157,7 @@ def engine():
             for mobileDevice in t.getMobileDevices():
                 if (mobileDevice["settings"]["geoTrackingEnabled"] == True):
                     if (mobileDevice["location"] != None):
-                        if (mobileDevice["location"]["relativeDistanceFromHomeFence"] == 0.0):
+                        if (mobileDevice["location"]["atHome"]):
                             devicesHome.append(mobileDevice["name"])
 
             if (lastMessage.find("Connection Error") != -1 or lastMessage.find("Waiting for the device location") != -1):
